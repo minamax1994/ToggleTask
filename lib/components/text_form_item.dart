@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../model/model.dart';
+enum CustomTextFormFieldType { Email, Password, Token }
 
 class CustomTextFormField extends StatefulWidget {
   final CustomTextFormFieldType type;

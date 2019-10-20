@@ -5,8 +5,6 @@ import '../components/text_form_item.dart';
 import '../components/button_item.dart';
 import '../network/api_service.dart';
 
-import '../model/model.dart';
-
 class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
