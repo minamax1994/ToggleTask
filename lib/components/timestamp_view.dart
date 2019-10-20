@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:date_format/date_format.dart';
 
 import '../functions/seconds_to_time_string.dart';
 
@@ -21,15 +22,26 @@ class _TimestampViewState extends State<TimestampView> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Text(
-            widget.date.substring(0,10),
+            numericalDateToEnglishDate(widget.date),
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
           ),
           Text(
             secondsToTimeString(widget.duration),
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.redAccent),
+            style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 17,
+                color: Colors.redAccent),
           ),
         ],
       ),
     );
+  }
+
+  String numericalDateToEnglishDate(String numericalDate) {
+    int year = int.parse(numericalDate.substring(0, 4));
+    int month = int.parse(numericalDate.substring(5, 7));
+    int day = int.parse(numericalDate.substring(8, 10));
+    return formatDate(
+        DateTime(year, month, day), [DD, ', ', dd, ' ', MM, ', ', yyyy]);
   }
 }
