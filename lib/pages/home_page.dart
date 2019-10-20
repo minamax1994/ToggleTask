@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:toggle_task/components/time_entry_view.dart';
-import 'package:toggle_task/components/timestamp_view.dart';
 
 import '../model/model.dart';
 import '../bloc/bloc.dart';
-import '../components/global_items.dart' as global;
+import '../components/appbar_item.dart';
+import '../components/time_entry_view.dart';
+import '../components/timestamp_view.dart';
+import '../functions/exit_app.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -23,35 +24,21 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: global.appBar,
-      body: StreamBuilder<List<TimeEntry>>(
-        stream: bloc.timeEntriesStream,
-        builder:
-            (BuildContext context, AsyncSnapshot<List<TimeEntry>> snapshot) {
-          if (snapshot.hasData) {
-            int currentTimestamp = 0;
-            List<TimestampView> timestamps = _calculateTimestamps(snapshot);
-            return ListView.builder(
-                itemCount: snapshot.data.length,
-                itemBuilder: (BuildContext context, int index) {
-                  if (index == 0) {
-                    currentTimestamp++;
-                    return Column(
-                      children: <Widget>[
-                        timestamps[currentTimestamp - 1],
-                        TimeEntryView(snapshot.data[index]),
-                      ],
-                    );
-                  } else {
-                    if (snapshot.data[index].start.substring(8, 10) ==
-                        snapshot.data[index - 1].start.substring(8, 10)) {
-                      return Column(
-                        children: <Widget>[
-                          TimeEntryView(snapshot.data[index]),
-                        ],
-                      );
-                    } else {
+    return WillPopScope(
+      onWillPop: () => exitApp(),
+      child: Scaffold(
+        appBar: appBar(context),
+        body: StreamBuilder<List<TimeEntry>>(
+          stream: bloc.timeEntriesStream,
+          builder:
+              (BuildContext context, AsyncSnapshot<List<TimeEntry>> snapshot) {
+            if (snapshot.hasData) {
+              int currentTimestamp = 0;
+              List<TimestampView> timestamps = _calculateTimestamps(snapshot);
+              return ListView.builder(
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    if (index == 0) {
                       currentTimestamp++;
                       return Column(
                         children: <Widget>[
@@ -59,13 +46,30 @@ class _HomePageState extends State<HomePage> {
                           TimeEntryView(snapshot.data[index]),
                         ],
                       );
+                    } else {
+                      if (snapshot.data[index].start.substring(8, 10) ==
+                          snapshot.data[index - 1].start.substring(8, 10)) {
+                        return Column(
+                          children: <Widget>[
+                            TimeEntryView(snapshot.data[index]),
+                          ],
+                        );
+                      } else {
+                        currentTimestamp++;
+                        return Column(
+                          children: <Widget>[
+                            timestamps[currentTimestamp - 1],
+                            TimeEntryView(snapshot.data[index]),
+                          ],
+                        );
+                      }
                     }
-                  }
-                });
-          } else {
-            return Center(child: CircularProgressIndicator());
-          }
-        },
+                  });
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
       ),
     );
   }

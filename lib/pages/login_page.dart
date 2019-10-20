@@ -4,6 +4,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import '../components/text_form_item.dart';
 import '../components/button_item.dart';
 import '../network/api_service.dart';
+import '../functions/exit_app.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -22,12 +23,16 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return WillPopScope(
+      onWillPop: () => exitApp(),
+      child: Scaffold(
         key: _scaffoldKey,
         body: Form(
           key: _formKey,
           child: tokenMode ? _buildTokenBody() : _buildEmailBody(),
-        ));
+        ),
+      ),
+    );
   }
 
   Widget _buildEmailBody() {
@@ -35,8 +40,9 @@ class _LoginPageState extends State<LoginPage> {
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(horizontal: screenWidth * .1),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          SizedBox(height: 40),
+          SizedBox(height: 50),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(

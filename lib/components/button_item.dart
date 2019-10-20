@@ -24,7 +24,7 @@ class _CustomButtonState extends State<CustomButton> {
         widget.title,
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
       ),
-      textColor: Colors.white,
+      textColor: Colors.redAccent,
       onPressed: widget.onPressed
     );
   }

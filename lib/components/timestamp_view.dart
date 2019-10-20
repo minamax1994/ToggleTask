@@ -26,7 +26,7 @@ class _TimestampViewState extends State<TimestampView> {
           ),
           Text(
             secondsToTimeString(widget.duration),
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 17, color: Colors.redAccent),
           ),
         ],
       ),

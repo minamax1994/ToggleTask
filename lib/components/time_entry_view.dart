@@ -3,6 +3,7 @@ import 'package:toggle_task/functions/seconds_to_time_string.dart';
 
 import '../model/model.dart';
 import '../bloc/project_bloc.dart';
+import '../functions/show_details.dart';
 
 class TimeEntryView extends StatefulWidget {
   final TimeEntry timeEntry;
@@ -15,6 +16,9 @@ class TimeEntryView extends StatefulWidget {
 
 class _TimeEntryViewState extends State<TimeEntryView> {
   ProjectBloc projectBloc = ProjectBloc();
+  String projectName;
+  String clientName;
+
   @override
   void initState() {
     projectBloc.fetchProject(widget.timeEntry.pid);
@@ -44,99 +48,116 @@ class _TimeEntryViewState extends State<TimeEntryView> {
 
   Widget _buildTimeEntry(
       AsyncSnapshot<Project> projectSnapshot, String hexColor) {
-    return Card(
-      elevation: 5.0,
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              title: Text(
-                widget.timeEntry.description != null
-                    ? widget.timeEntry.description
-                    : 'No Description',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              trailing: Text(
-                secondsToTimeString(widget.timeEntry.duration),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              subtitle: Row(
-                children: <Widget>[
-                  Text(
-                    projectSnapshot.data.data.name != null
-                        ? projectSnapshot.data.data.name
-                        : 'No Project',
-                    style: TextStyle(
-                        color: Color(int.parse('FF' + hexColor, radix: 16))),
+    return InkWell(
+      child: Card(
+        elevation: 5.0,
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                title: Text(
+                  widget.timeEntry.description != null
+                      ? widget.timeEntry.description
+                      : 'No Description',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
                   ),
-                  SizedBox(width: 5),
-                  projectSnapshot.data.data.cid != null
-                      ? StreamBuilder<Client>(
-                          stream: projectBloc.clientStream,
-                          builder: (BuildContext context,
-                              AsyncSnapshot<Client> clientSnapshot) {
-                            if (clientSnapshot.hasData) {
-                              return Text(
-                                clientSnapshot.data.data.name != null
-                                    ? clientSnapshot.data.data.name
-                                    : 'No Client',
-                                style: TextStyle(color: Colors.grey),
-                              );
-                            } else {
-                              return Container();
-                            }
-                          })
-                      : Text(
-                          'No Client',
-                          style: TextStyle(color: Colors.grey),
-                        ),
-                ],
+                ),
+                trailing: Text(
+                  secondsToTimeString(widget.timeEntry.duration),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    // color: Colors.redAccent,
+                  ),
+                ),
+                subtitle: Row(
+                  children: <Widget>[
+                    Text(
+                      projectSnapshot.data.data.name != null
+                          ? projectSnapshot.data.data.name
+                          : 'No Project',
+                      style: TextStyle(
+                          color: Color(int.parse('FF' + hexColor, radix: 16))),
+                    ),
+                    SizedBox(width: 5),
+                    projectSnapshot.data.data.cid != null
+                        ? StreamBuilder<Client>(
+                            stream: projectBloc.clientStream,
+                            builder: (BuildContext context,
+                                AsyncSnapshot<Client> clientSnapshot) {
+                              if (clientSnapshot.hasData) {
+                                clientName =
+                                    clientSnapshot.data.data.name != null
+                                        ? clientSnapshot.data.data.name
+                                        : 'No Client';
+                                return Text(
+                                  clientSnapshot.data.data.name != null
+                                      ? clientSnapshot.data.data.name
+                                      : 'No Client',
+                                  style: TextStyle(color: Colors.grey),
+                                );
+                              } else {
+                                return Container();
+                              }
+                            })
+                        : Text(
+                            'No Client',
+                            style: TextStyle(color: Colors.grey),
+                          ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+      onTap: () {
+        showDetails(context, widget.timeEntry,
+            projectSnapshot.data.data.name, clientName);
+      },
     );
   }
 
   Widget _buildNoProjectTimeEntry() {
-    return Card(
-      elevation: 5.0,
-      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
-      child: SingleChildScrollView(
-        child: Column(
-          children: <Widget>[
-            ListTile(
-              title: Text(
-                widget.timeEntry.description != null
-                    ? widget.timeEntry.description
-                    : 'No Description',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              trailing: Text(
-                secondsToTimeString(widget.timeEntry.duration),
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              subtitle: Row(
-                children: <Widget>[
-                  Text(
-                    'No Project',
+    return InkWell(
+      child: Card(
+        elevation: 5.0,
+        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+        child: SingleChildScrollView(
+          child: Column(
+            children: <Widget>[
+              ListTile(
+                title: Text(
+                  widget.timeEntry.description != null
+                      ? widget.timeEntry.description
+                      : 'No Description',
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
+                ),
+                trailing: Text(
+                  secondsToTimeString(widget.timeEntry.duration),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    // color: Colors.redAccent,
+                  ),
+                ),
+                subtitle: Row(
+                  children: <Widget>[
+                    Text(
+                      'No Project',
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
+      onTap: () {
+        showDetails(context, widget.timeEntry, null, null);
+      },
     );
   }
 
