@@ -56,11 +56,6 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         validator = (String value) {
           if (value.isEmpty) {
             return 'Password cant be empty';
-          } else if (value.length < 6) {
-            return 'Password must be at least 6 charachters';
-          } else if (!value.contains(RegExp(r'[A-Z]')) ||
-              !value.contains(RegExp(r'[a-z]'))) {
-            return 'Password must include small and capital letters';
           } else {
             return null;
           }

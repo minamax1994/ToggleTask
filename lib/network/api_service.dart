@@ -25,7 +25,8 @@ class ApiService {
       "Content-type": "application/x-www-form-urlencoded",
       "Accept": "application/json"
     });
-    if (response.body != null) {
+    if (response.body != null && response.body != '') {
+      print('printing'+response.body.toString());
       final jsonData = json.decode(response.body);
       LoginResponse responseData = LoginResponse.fromJson(jsonData);
       print(responseData.toString());
@@ -34,10 +35,10 @@ class ApiService {
         prefs.setString('token', responseData.data.apiToken);
         return 'ok';
       } else {
-        return 'Error Code ${response.statusCode}';
+        return 'Error Code ${response.statusCode} ${response.reasonPhrase}';
       }
     } else {
-      return 'Error Code ${response.statusCode}';
+      return 'Error Code ${response.statusCode} ${response.reasonPhrase}';
     }
   }
 
@@ -62,14 +63,14 @@ class ApiService {
           "Accept": "application/json"
         });
     List<TimeEntry> responseData = List<TimeEntry>();
-    if (response.body != null) {
+    if (response.body != null && response.body != '') {
       final List<dynamic> jsonData = json.decode(response.body);
       for (int i = 0; i < jsonData.length; i++) {
         responseData.add(TimeEntry.fromJson(jsonData[i]));
       }
       print(responseData.toString());
       if (response.statusCode != 200) {
-        print('Error Code ${response.statusCode}');
+        print('Error Code ${response.statusCode} ${response.reasonPhrase}');
       }
     }
     return responseData;
@@ -87,12 +88,12 @@ class ApiService {
           "Accept": "application/json"
         });
     Project responseData = Project();
-    if (response.body != null) {
+    if (response.body != null && response.body != '') {
       final jsonData = json.decode(response.body);
       responseData = Project.fromJson(jsonData);
       print(responseData.toString());
       if (response.statusCode != 200) {
-        print('Error Code ${response.statusCode}');
+        print('Error Code ${response.statusCode} ${response.reasonPhrase}');
       }
     }
     return responseData;
@@ -110,12 +111,12 @@ class ApiService {
           "Accept": "application/json"
         });
     Client responseData = Client();
-    if (response.body != null) {
+    if (response.body != null && response.body != '') {
       final jsonData = json.decode(response.body);
       responseData = Client.fromJson(jsonData);
       print(responseData.toString());
       if (response.statusCode != 200) {
-        print('Error Code ${response.statusCode}');
+        print('Error Code ${response.statusCode} ${response.reasonPhrase}');
       }
     }
     return responseData;

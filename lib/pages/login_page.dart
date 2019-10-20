@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:progress_dialog/progress_dialog.dart';
+import 'package:flutter_offline/flutter_offline.dart';
 
 import '../components/text_form_item.dart';
 import '../components/button_item.dart';
@@ -27,9 +28,26 @@ class _LoginPageState extends State<LoginPage> {
       onWillPop: () => exitApp(),
       child: Scaffold(
         key: _scaffoldKey,
-        body: Form(
-          key: _formKey,
-          child: tokenMode ? _buildTokenBody() : _buildEmailBody(),
+        body: OfflineBuilder(
+          connectivityBuilder: (
+            BuildContext context,
+            ConnectivityResult connectivity,
+            Widget child,
+          ) {
+            return connectivity == ConnectivityResult.none
+                ? Center(
+                    child: Text(
+                      'No Internet Access',
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  )
+                : Form(
+                    key: _formKey,
+                    child: tokenMode ? _buildTokenBody() : _buildEmailBody(),
+                  );
+          },
+          child: Container(),
         ),
       ),
     );
