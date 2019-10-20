@@ -48,6 +48,15 @@ class _HomePageState extends State<HomePage> {
                 builder: (BuildContext context,
                     AsyncSnapshot<List<TimeEntry>> snapshot) {
                   if (snapshot.hasData) {
+                    if (snapshot.data.isEmpty) {
+                      return Center(
+                        child: Text(
+                          'No Time Entries',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                      );
+                    }
                     int currentTimestamp = 0;
                     List<TimestampView> timestamps =
                         _calculateTimestamps(snapshot);
