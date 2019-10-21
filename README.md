@@ -12,4 +12,6 @@ A flutter app that implements the Toggle App API using BLoC Pattern and has the 
 
 4- Showing time entry details inside Modal Sheet upon click.
 
-5- logout functionaity.
+5- logout functionality.
+
+6- Connectivity check functionality.
