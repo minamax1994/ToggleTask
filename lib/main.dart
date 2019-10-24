@@ -6,12 +6,7 @@ import './pages/home_page.dart';
 
 void main() => runApp(TogglApp());
 
-class TogglApp extends StatefulWidget {
-  @override
-  _TogglAppState createState() => _TogglAppState();
-}
-
-class _TogglAppState extends State<TogglApp> {
+class TogglApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -40,26 +35,43 @@ class Loader extends StatefulWidget {
 }
 
 class _LoaderState extends State<Loader> {
-  void _getToken() async {
+  Future<String> _getTokenFuture;
+
+  Future<String> _getToken() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
+    String route;
     if (token != null) {
-      Navigator.of(context).pushNamed('/home');
+      route = '/home';
     } else {
-      Navigator.of(context).pushNamed('/login');
+      route = '/login';
     }
+    return route;
   }
 
   void initState() {
     super.initState();
-    _getToken();
+    _getTokenFuture = _getToken();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: CircularProgressIndicator(),
+        child: FutureBuilder<String>(
+          future: _getTokenFuture,
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if (snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.data == '/home')
+                return HomePage();
+              else
+                return LoginPage();
+            }
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        ),
       ),
     );
   }

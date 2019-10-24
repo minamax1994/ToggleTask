@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_offline/flutter_offline.dart';
 
 import '../model/model.dart';
-import '../bloc/bloc.dart';
+import '../bloc/home_bloc.dart';
 import '../components/appbar_item.dart';
 import '../components/time_entry_view.dart';
 import '../components/timestamp_view.dart';
@@ -15,10 +15,11 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<TimeEntry> timeEntries;
+  HomeBloc homeBloc = HomeBloc();
 
   @override
   void initState() {
-    bloc.fetchTimeEntries(
+    homeBloc.fetchTimeEntries(
         DateTime.now().add(Duration(days: -30)), DateTime.now());
     super.initState();
   }
@@ -44,7 +45,7 @@ class _HomePageState extends State<HomePage> {
               );
             } else {
               return StreamBuilder<List<TimeEntry>>(
-                stream: bloc.timeEntriesStream,
+                stream: homeBloc.timeEntriesStream,
                 builder: (BuildContext context,
                     AsyncSnapshot<List<TimeEntry>> snapshot) {
                   if (snapshot.hasData) {
@@ -92,7 +93,7 @@ class _HomePageState extends State<HomePage> {
                           }
                         });
                   } else {
-                    bloc.fetchTimeEntries(
+                    homeBloc.fetchTimeEntries(
                         DateTime.now().add(Duration(days: -30)),
                         DateTime.now());
                     return Center(child: CircularProgressIndicator());
@@ -109,25 +110,24 @@ class _HomePageState extends State<HomePage> {
 
   List<TimestampView> _calculateTimestamps(
       AsyncSnapshot<List<TimeEntry>> snapshot) {
-    int dailyDuration = 0;
-    List<TimestampView> timestamps = List<TimestampView>();
-    for (int i = 0; i < snapshot.data.length; i++) {
-      if (i == 0) {
-        dailyDuration += snapshot.data[i].duration;
-        timestamps.add(TimestampView(snapshot.data[i].start, dailyDuration));
+    Map<String, TimestampView> timestampViews = Map<String, TimestampView>();
+    for (TimeEntry timeEntry in snapshot.data) {
+      String day = getDayString(timeEntry.start);
+      TimestampView view = timestampViews[day];
+      if (view != null) {
+        timestampViews[day] =
+            TimestampView(timeEntry.start, view.duration + timeEntry.duration);
       } else {
-        if (snapshot.data[i].start.substring(8, 10) ==
-            snapshot.data[i - 1].start.substring(8, 10)) {
-          dailyDuration += snapshot.data[i].duration;
-          timestamps.last =
-              TimestampView(snapshot.data[i].start, dailyDuration);
-        } else {
-          dailyDuration = 0;
-          dailyDuration += snapshot.data[i].duration;
-          timestamps.add(TimestampView(snapshot.data[i].start, dailyDuration));
-        }
+        timestampViews[day] =
+            TimestampView(timeEntry.start, timeEntry.duration);
       }
     }
-    return timestamps;
+    List<TimestampView> values = timestampViews.values.toList();
+    values.sort((left, right) => right.date.compareTo(left.date));
+    return values;
+  }
+
+  String getDayString(String date) {
+    return date.substring(8, 10);
   }
 }
