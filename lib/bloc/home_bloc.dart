@@ -3,7 +3,7 @@ import 'package:rxdart/rxdart.dart';
 import '../model/model.dart';
 import '../network/api_service.dart';
 
-class Bloc {
+class HomeBloc {
   String loginResponse;
   List<TimeEntry> timeEntries;
 
@@ -28,5 +28,3 @@ class Bloc {
     _timeEntriesFetcher.close();
   }
 }
-
-final Bloc bloc = Bloc();

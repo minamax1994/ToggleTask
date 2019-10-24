@@ -110,7 +110,7 @@ class _LoginPageState extends State<LoginPage> {
       padding: EdgeInsets.symmetric(horizontal: screenWidth * .1),
       child: Column(
         children: <Widget>[
-          SizedBox(height: 40),
+          SizedBox(height: 50),
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
